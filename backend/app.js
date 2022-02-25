@@ -7,11 +7,12 @@ const mongoose = require('mongoose');
 // Import model 'sauce'
 const sauce = require('./models/sauce');
 
+require('dotenv').config()
 // Create Express application
 const app = express();
 
 // Connect database
-mongoose.connect('mongodb+srv://bo:malabar@cluster0.0o5rq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect(process.env.SECRET_DB,
 { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Succès de la connexion à MongoDB !'))
@@ -29,8 +30,19 @@ app.use((req, res, next) => {
     // Allow following mentionned methods
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
-  });
+});
 
+app.get('/api/sauces', (req, res, next) => {
+  sauce.find() // return all sauces [] from database 
+  .then(sauces => res.status(200).json(sauces)) // Status 200 = success
+  .catch(error => res.status(400).json({ error }));
+});
+
+app.get('/api/sauces/:id', (req, res, next) => {
+  sauce.findOne({ _id: req.params.id }) // return 1 sauce (match id)
+    .then(sauce => res.status(200).json(sauce))
+    .catch(error => res.status(404).json({ error }));
+}); 
 
 app.post('/api/sauces', (req, res, next) => {
   delete req.body._id;
@@ -42,20 +54,17 @@ app.post('/api/sauces', (req, res, next) => {
     .catch(error => res.status(400).json({ error })); // Status 400 = bad request
 });
 
-
-app.get('/api/sauces/:id', (req, res, next) => {
-  sauce.findOne({ _id: req.params.id })
-    .then(sauce => res.status(200).json(sauce))
-    .catch(error => res.status(404).json({ error }));
+app.put('/api/sauces/:id', (req, res, next) => {
+  sauce.updateOne({ _id: req.params.id}, { ...req.body, _id: req.params.id })
+    .then(() => res.status(200).json({ message: 'Sauce mise à jour !'}))
+    .catch(error => res.status(400).json({ error })); 
 });
 
-
-app.get('/api/sauces', (req, res, next) => {
-  sauce.find() // return all sauces [] from database 
-  .then(sauces => res.status(200).json(sauces)) // Status 200 = success
+app.delete('/api/sauces/:id', (req, res, next) => {
+  sauce.deleteOne({ _id: req.params.id })
+  .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
   .catch(error => res.status(400).json({ error }));
 });
-
 
 // Export the application
 module.exports = app;
