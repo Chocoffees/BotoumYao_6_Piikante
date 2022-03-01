@@ -4,8 +4,9 @@ const express = require('express');
 // Import Mongoose
 const mongoose = require('mongoose');
 
-// Import router 'sauce'
+// Import routers
 const sauceRoutes = require('./routes/sauce');
+const userRoutes = require('./routes/user');
 
 require('dotenv').config()
 // Create Express application
@@ -32,8 +33,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// In this version: logic routing has been transfered to /routes/sauce.js
+// Save routes 
 app.use('/api/sauces', sauceRoutes);
+// Route root related to auth
+app.use('/api/auth', userRoutes);
 
 // Export the application
 module.exports = app;
