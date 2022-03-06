@@ -4,7 +4,7 @@
 const bcrypt = require('bcrypt');
 // Secure API access (->informations<-)
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config()
 const User = require('../models/User');
 
 // Register new users in database: use signup function
@@ -45,7 +45,7 @@ exports.login = (req, res, next) => {
               // Allow user connection with encrypted token 
               token: jwt.sign( // encode new token: use sign()
                   { userId: user._id },
-                  'RANDOM_TOKEN_SECRET', // long random string
+                  process.env.RANDOM_TOKEN_SECRET, // long random string
                   { expiresIn: '24h' } // configuration > apply access token expiration delay
                 )
             });
