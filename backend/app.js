@@ -4,6 +4,9 @@ const express = require('express');
 // Import Mongoose
 const mongoose = require('mongoose');
 
+// Import Node 'path' module > give access to the path of our file system
+const app = require('path');
+
 // Import routers
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
@@ -32,6 +35,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
+
+// Set middleware > specify folder in charge to serve static files (images)
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Save routes 
 app.use('/api/sauces', sauceRoutes);

@@ -7,6 +7,9 @@ const router = express.Router();
 // Import authentication middleware > protect routes
 const auth = require('../middleware/auth');
 
+// Import multer middleware > handle images uploaded
+const multer = require('../middleware/multer-config');
+
 // Import controller
 const sauceCtrl = require('../controllers/sauce');
 
@@ -18,10 +21,10 @@ router.get('/', auth, sauceCtrl.getAllSauces);
 router.get('/:id', auth, sauceCtrl.getOneSauce);
 
 // Create sauce
-router.post('/', auth, sauceCtrl.createSauce);
+router.post('/', auth, multer, sauceCtrl.createSauce);
 
 // Update one sauce
-router.put('/:id', auth, sauceCtrl.updateSauce);
+router.put('/:id', auth, multer, sauceCtrl.updateSauce);
 
 // Delete one sauce
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
