@@ -5,7 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 // Import Node 'path' module > give access to the path of our file system
-const app = require('path');
+const path = require('path');
 
 // Import routers
 const sauceRoutes = require('./routes/sauce');
