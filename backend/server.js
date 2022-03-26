@@ -6,6 +6,9 @@ const http = require('http');
 // Import application
 const app = require('./app');
 
+// Import 'dotenv' package > access to environment variables
+require('dotenv').config()
+
 // Make sure that the port is valid: number or string
 const normalizePort = val => {
     const port = parseInt(val, 10);
