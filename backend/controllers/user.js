@@ -1,5 +1,7 @@
 // Create users
 
+// Validate password
+const passwordValidator = require('password-validator');
 // Salt and hash password > securely store user password
 const bcrypt = require('bcrypt');
 // Secure API access (->informations<-)
@@ -7,9 +9,24 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const User = require('../models/User');
 
+// Define user password validation properties > create schema
+var schema = new passwordValidator();
+schema
+.is().min(12) // CNIL
+.is().max(30)
+.has().uppercase()
+.has().lowercase()
+.has().digits(1)
+.has().not().spaces()
+.is().not().oneOf(['Azerty123', 'Qwerty123', 'Password123']); // unhauthorized passwords examples
+
 // Register new users in database: use signup function
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)  // call of the bcrypt hash function in the password and asks to "salt" the password
+  if(!schema.validate(req.body.password)) {
+    res.status(400).json({ error: 'Niveau de sécurité du mot de passe insuffisant' });
+  }
+  else {
+  bcrypt.hash(req.body.password, 10)  // call of the bcrypt hash function in the password and asks to "salt" the password
     // create and register user in database (return res success/failure)
     .then(hash => {
       const user = new User({
@@ -26,7 +43,7 @@ exports.signup = (req, res, next) => {
       console.log(error)
       res.status(500).json({ error })});
     };
-      
+  }      
 // Connect users to app: use login function to check user informations
 // > Permit connection
 exports.login = (req, res, next) => {

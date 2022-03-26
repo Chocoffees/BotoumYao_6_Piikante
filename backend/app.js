@@ -1,6 +1,9 @@
 // Import Express
 const express = require('express');
 
+// Import 'helmet' > secure HTTP headers
+const helmet = require('helmet');
+
 // Import Mongoose
 const mongoose = require('mongoose');
 
@@ -14,6 +17,9 @@ const userRoutes = require('./routes/user');
 require('dotenv').config()
 // Create Express application
 const app = express();
+
+// Activ app protection from vulnerabilities 
+app.use(helmet());
 
 // Connect database
 mongoose.connect(process.env.SECRET_DB,
